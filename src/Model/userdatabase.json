@@ -1,0 +1,22 @@
+[
+    {
+        "password": "password123",
+        "usertype": "Student",
+        "email": "user1@yahoo.com"
+    },
+    {
+        "password": "mysecretpass",
+        "usertype": "Instructor",
+        "email": "user2@gmail.com"
+    },
+    {
+        "password": "helloWorld!",
+        "usertype": "Student",
+        "email": "user3@gmail.com"
+    },
+    {
+        "usertype": "Student",
+        "email": "aly@gmail.com",
+        "password": "1234"
+    }
+]
