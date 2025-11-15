@@ -1,6 +1,6 @@
 package gui;
 
-import Model.UserDatabase;
+import Model.JsonDatabaseManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,7 +25,7 @@ public class LoginPanel extends JFrame {
     private JLabel signup;
 
 
-    public LoginPanel(UserDatabase db) {
+    public LoginPanel(JsonDatabaseManager db) {
         setContentPane(Container);
         setTitle("Login");
         setMinimumSize(new java.awt.Dimension(350, 250));
@@ -73,7 +73,7 @@ public class LoginPanel extends JFrame {
                     JOptionPane.showMessageDialog(Container, "Please enter a valid email!");
                     return;
                 }
-                if(isLoginValid(email, password, usertype)){
+                if(isLoginValid(email, password, usertype, db)){
                     JOptionPane.showMessageDialog(Container,"Login successful!");
                     setVisible(false);
                     //next menu
@@ -101,9 +101,9 @@ public class LoginPanel extends JFrame {
         return email.matches(emailRegex);
     }
 
-    public boolean isLoginValid(String email, String password, String usertype){
+    public boolean isLoginValid(String email, String password, String usertype, JsonDatabaseManager db){
         try {
-            String content = new String(Files.readAllBytes(Paths.get("src/Model/userdatabase.json")));
+            String content = new String(Files.readAllBytes(Paths.get(db.getFilename())));
             JSONArray array = new JSONArray(content);
 
             for (int i = 0; i < array.length(); i++) {
@@ -112,7 +112,7 @@ public class LoginPanel extends JFrame {
                 String Password = obj.getString("password");
                 String Usertype = obj.getString("usertype");
 
-                if (Usertype.equalsIgnoreCase(usertype) && Email.equals(email) && Password.equals(Password)) {
+                if (Usertype.equalsIgnoreCase(usertype) && Email.equals(email) && db.sha256(password).equals(Password) ) {
                     return true;
                 }
             }
