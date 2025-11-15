@@ -1,7 +1,7 @@
-import Model.UserDatabase;
+import Model.JsonDatabaseManager;
 import gui.LoginPanel;
 
 public static void main(String[] args) {
-    UserDatabase db = new UserDatabase();
+    JsonDatabaseManager db = new JsonDatabaseManager();
     new LoginPanel(db).setVisible(true);
 }

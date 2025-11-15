@@ -4,6 +4,8 @@ package Model;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,11 +14,11 @@ import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 
 
-public class UserDatabase {
-    protected ArrayList<User> records;
-    protected String filename;
+public class JsonDatabaseManager {
+    private ArrayList<User> records;
+    private String filename;
 
-    public UserDatabase(){
+    public JsonDatabaseManager(){
         records = new ArrayList<>();
         filename = "src/Model/userdatabase.json";
         readFromFile(filename);
@@ -75,9 +77,25 @@ public class UserDatabase {
 
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(array.toString(4));
-            System.out.println("Appended user to " + filePath);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public String sha256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(input.getBytes());
+
+            // Convert bytes to hex
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                hexString.append(String.format("%02x", b));
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -2,11 +2,9 @@ package gui;
 
 import Model.Instructor;
 import Model.Student;
-import Model.User;
-import Model.UserDatabase;
+import Model.JsonDatabaseManager;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,7 +21,7 @@ public class SignupPanel extends JFrame{
     private JLabel password2;
 
 
-    public SignupPanel(UserDatabase db) {
+    public SignupPanel(JsonDatabaseManager db) {
         setContentPane(Container);
         setTitle("Sign Up");
         setMinimumSize(new java.awt.Dimension(350, 250));
@@ -45,18 +43,6 @@ public class SignupPanel extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 passwordField1.requestFocusInWindow(); // Simulates pressing the button
-            }
-        });
-        emailTextField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                passwordField.requestFocusInWindow();
-            }
-        });
-        passwordField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Create.doClick(); // Simulates pressing the button
             }
         });
         Create.addActionListener(new ActionListener() {
@@ -84,10 +70,10 @@ public class SignupPanel extends JFrame{
                     }
                     else {
                         if (usertype.equals("Instructor")) {
-                            db.appendUser(db.getFilename(),new Instructor(email, password));
+                            db.appendUser(db.getFilename(),new Instructor(email, db.sha256(password)));
                         }
                         else if (usertype.equals("Student")) {
-                            db.appendUser(db.getFilename(),new Student(email, password));
+                            db.appendUser(db.getFilename(),new Student(email, db.sha256(password)));
                         }
                         JOptionPane.showMessageDialog(Container, "User added successfully!");
                         setVisible(false);
@@ -95,7 +81,7 @@ public class SignupPanel extends JFrame{
                     }
                 }
                 else {
-                    JOptionPane.showMessageDialog(Container, "Passwords are not the same!\nPlease Try Again!!");
+                    JOptionPane.showMessageDialog(Container, "Passwords do not match\nPlease Try Again!");
                 }
             }
         });
