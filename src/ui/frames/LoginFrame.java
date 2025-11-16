@@ -8,7 +8,6 @@ import model.Instructor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class LoginFrame extends JFrame {
     private AuthManager auth;
@@ -81,13 +80,10 @@ public class LoginFrame extends JFrame {
             }
 
             java.util.Optional<User> opt = auth.login(email, password);
-            if (opt.isPresent()) {
-                User user = opt.get();
-                if (!selectedRole.equals(user.getRole())) {
-                    JOptionPane.showMessageDialog(this, "This account is not registered as a " + selectedRole);
-                    return;
-                }
 
+            // Only login if credentials are correct AND role matches
+            if (opt.isPresent() && selectedRole.equals(opt.get().getRole())) {
+                User user = opt.get();
                 JOptionPane.showMessageDialog(this, "Welcome, " + user.getUsername());
                 this.setVisible(false);
 
@@ -97,6 +93,7 @@ public class LoginFrame extends JFrame {
                     new InstructorDashboardFrame(db, (Instructor) user).setVisible(true);
                 }
             } else {
+                // Wrong credentials OR wrong role
                 JOptionPane.showMessageDialog(this, "Invalid credentials");
             }
         });

@@ -3,13 +3,17 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Student extends User {
+public class Student extends model.User {
+
     private List<String> enrolledCourses = new ArrayList<>();
 
     public Student(String username, String email, String passwordHash) {
         super("student", username, email, passwordHash);
     }
 
+    // ---------------------------
+    // Enrollment Handling
+    // ---------------------------
     public List<String> getCourses() {
         return enrolledCourses;
     }

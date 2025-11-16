@@ -5,73 +5,110 @@ import model.AuthManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class SignupFrame extends JFrame {
     private JsonDatabaseManager db;
     private AuthManager auth;
+
     public SignupFrame(JsonDatabaseManager db) {
-        this.db = db; this.auth = new AuthManager(db);
+        this.db = db;
+        this.auth = new AuthManager(db);
         setTitle("SkillForge - Signup");
-        setSize(450,260);
+        setSize(400, 280);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         init();
     }
+
     private void init() {
-        JPanel p = new JPanel(new java.awt.GridLayout(6,2,5,5));
-        JTextField username = new JTextField();
-        JTextField email = new JTextField();
-        JPasswordField pass = new JPasswordField();
-        JComboBox<String> role = new JComboBox<String>(new String[]{"student","instructor"});
-        JButton btnCreate = new JButton("Create account");
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JTextField usernameField = new JTextField();
+        JTextField emailField = new JTextField();
+        JPasswordField passField = new JPasswordField();
+        JButton btnSignup = new JButton("Create Account");
         JButton btnBack = new JButton("Back");
 
-        p.add(new JLabel("Username:")); p.add(username);
-        p.add(new JLabel("Email:")); p.add(email);
-        p.add(new JLabel("Password:")); p.add(pass);
-        p.add(new JLabel("Role:")); p.add(role);
-        p.add(btnCreate); p.add(btnBack);
-        add(p);
+        // Role selection
+        JRadioButton studentRadio = new JRadioButton("Student");
+        JRadioButton instructorRadio = new JRadioButton("Instructor");
+        ButtonGroup roleGroup = new ButtonGroup();
+        roleGroup.add(studentRadio);
+        roleGroup.add(instructorRadio);
+        studentRadio.setSelected(true);
 
-        username.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                email.requestFocusInWindow();
+        // Layout components
+        gbc.gridx = 0; gbc.gridy = 0;
+        panel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        panel.add(usernameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        panel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        panel.add(emailField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        panel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        panel.add(passField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3;
+        panel.add(new JLabel("Role:"), gbc);
+        gbc.gridx = 1;
+        JPanel rolePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        rolePanel.add(studentRadio);
+        rolePanel.add(instructorRadio);
+        panel.add(rolePanel, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        panel.add(btnSignup, gbc);
+        gbc.gridy = 5;
+        panel.add(btnBack, gbc);
+
+        add(panel);
+
+        // Focus order
+        usernameField.addActionListener(e -> emailField.requestFocusInWindow());
+        emailField.addActionListener(e -> passField.requestFocusInWindow());
+        passField.addActionListener(e -> btnSignup.doClick());
+
+        // Signup logic
+        btnSignup.addActionListener(e -> {
+            String username = usernameField.getText().trim();
+            String email = emailField.getText().trim();
+            String password = new String(passField.getPassword());
+            String role = studentRadio.isSelected() ? "student" : "instructor";
+
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields are required.");
+                return;
+            }
+            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                JOptionPane.showMessageDialog(this, "Invalid email format.");
+                return;
+            }
+
+            boolean success;
+            if ("student".equals(role)) success = auth.signupStudent(username, email, password);
+            else success = auth.signupInstructor(username, email, password);
+
+            if (!success) {
+                JOptionPane.showMessageDialog(this, "Email is already registered.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Account created! Please login.");
+                this.setVisible(false);
+                new LoginFrame(db).setVisible(true);
             }
         });
-        email.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pass.requestFocusInWindow();
-            }
-        });
 
-        btnCreate.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String user = username.getText().trim();
-                String em = email.getText().trim();
-                String pw = new String(pass.getPassword());
-                String r = (String)role.getSelectedItem();
-                if (user.isEmpty()||em.isEmpty()||pw.isEmpty()) { JOptionPane.showMessageDialog(SignupFrame.this, "All fields required"); return; }
-                if (!em.matches("^[A-Za-z0-9+_.-]+@(.+)$")) { JOptionPane.showMessageDialog(SignupFrame.this, "Invalid email"); return; }
-                boolean ok;
-                if ("student".equals(r)) ok = auth.signupStudent(user,em,pw);
-                else ok = auth.signupInstructor(user,em,pw);
-                if (!ok) JOptionPane.showMessageDialog(SignupFrame.this, "Email already registered");
-                else {
-                    JOptionPane.showMessageDialog(SignupFrame.this, "Account created. Please login.");
-                    SignupFrame.this.setVisible(false);
-                    new LoginFrame(db).setVisible(true);
-                }
-            }
-        });
-
-        btnBack.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SignupFrame.this.setVisible(false); new LoginFrame(db).setVisible(true);
-            }
+        // Back button
+        btnBack.addActionListener(e -> {
+            this.setVisible(false);
+            new LoginFrame(db).setVisible(true);
         });
     }
 }

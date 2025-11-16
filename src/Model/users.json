@@ -43,6 +43,19 @@
       "username": "youssef88",
       "email": "youssef1@gmail.com",
       "password": "bfa3d224aa3263490dad0f945f4ea741fc002265fc4d45d0d5c2a4e6ca88dfe3"
+    },
+    {
+      "enrolledCourses": [
+        "C8078",
+        "C4904",
+        "C3354",
+        "C2489"
+      ],
+      "userId": "S5904",
+      "role": "student",
+      "username": "dod",
+      "email": "dod@gmail.com",
+      "password": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"
     }
   ],
   "instructors": [

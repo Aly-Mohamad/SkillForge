@@ -14,8 +14,14 @@
     ],
     "students": [
       "S6869",
-      "S0138"
-    ]
+      "S0138",
+      "S5904"
+    ],
+    "progress": {
+      "S5904": [
+        "L8086"
+      ]
+    }
   },
   {
     "courseId": "C3354",
@@ -28,11 +34,23 @@
         "title": "Intro to JS",
         "content": "First App",
         "resources": []
+      },
+      {
+        "lessonId": "L1412",
+        "title": "Loops",
+        "content": "for loop",
+        "resources": []
       }
     ],
     "students": [
-      "S0138"
-    ]
+      "S0138",
+      "S5904"
+    ],
+    "progress": {
+      "S5904": [
+        "L8602"
+      ]
+    }
   },
   {
     "courseId": "C2489",
@@ -40,7 +58,9 @@
     "description": "OOP Programming",
     "instructorId": "I6798",
     "lessons": [],
-    "students": []
+    "students": [
+      "S5904"
+    ]
   },
   {
     "courseId": "C4904",
@@ -50,13 +70,19 @@
     "lessons": [
       {
         "lessonId": "L4748",
-        "title": "New Lesson",
-        "content": "",
+        "title": "Convolution",
+        "content": "impulse response",
         "resources": []
       }
     ],
     "students": [
-      "S0138"
-    ]
+      "S0138",
+      "S5904"
+    ],
+    "progress": {
+      "S5904": [
+        "L4748"
+      ]
+    }
   }
 ]
