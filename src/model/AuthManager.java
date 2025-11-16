@@ -1,9 +1,5 @@
 package model;
 
-import model.*;
-import model.JsonDatabaseManager;
-import model.HashUtil;
-
 import java.util.Optional;
 
 public class AuthManager {

@@ -86,6 +86,9 @@
     "progress": {
       "S5904": [
         "L4748"
+      ],
+      "S0138": [
+        "L4748"
       ]
     }
   },
@@ -110,5 +113,14 @@
         "L0519"
       ]
     }
+  },
+  {
+    "courseId": "C2845",
+    "title": "Mathematics 2",
+    "description": "Basics of Integration and infinite series",
+    "instructorId": "I9592",
+    "lessons": [],
+    "students": [],
+    "progress": {}
   }
 ]
