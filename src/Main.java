@@ -1,7 +1,9 @@
-import Model.JsonDatabaseManager;
-import gui.LoginPanel;
+import model.JsonDatabaseManager;
+import ui.frames.LoginFrame;
 
-public static void main(String[] args) {
-    JsonDatabaseManager db = new JsonDatabaseManager();
-    new LoginPanel(db).setVisible(true);
+public class Main {
+    public static void main(String[] args) {
+        JsonDatabaseManager db = new JsonDatabaseManager();
+        new LoginFrame(db).setVisible(true);
+    }
 }

@@ -1,116 +1,122 @@
-package Model;
+package model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.LinkedHashMap;
-
+import java.util.List;
+import java.util.Optional;
 
 public class JsonDatabaseManager {
-    private ArrayList<User> records;
-    private String filename;
+    private static final String USERS_FILE = "src/model/users.json";
+    private static final String COURSES_FILE = "src/model/courses.json";
 
-    public JsonDatabaseManager(){
-        records = new ArrayList<>();
-        filename = "src/Model/userdatabase.json";
-        readFromFile(filename);
-    }
+    private List<User> users = new ArrayList<User>();
+    private List<Course> courses = new ArrayList<Course>();
 
-    public ArrayList<User> readFromFile(String filePath) {
-        ArrayList<User> users = new ArrayList<>();
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    public JsonDatabaseManager() { load(); }
+
+    private void load() {
         try {
-            String content = new String(Files.readAllBytes(Paths.get(filePath)));
-            JSONArray array = new JSONArray(content);
-
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject obj = array.getJSONObject(i);
-                String email = obj.getString("email");
-                String password = obj.getString("password");
-                String usertype = obj.getString("usertype");
-
-                if (usertype.equalsIgnoreCase("Student")) {
-                    users.add(new Student(email, password));
-                } else if (usertype.equalsIgnoreCase("Instructor")) {
-                    users.add(new Instructor(email, password));
+            File u = new File(USERS_FILE);
+            if (u.exists()) {
+                FileReader fr = new FileReader(USERS_FILE);
+                UserWrapper wrapper = gson.fromJson(fr, UserWrapper.class);
+                fr.close();
+                if (wrapper!=null) {
+                    if (wrapper.students!=null) users.addAll(wrapper.students);
+                    if (wrapper.instructors!=null) users.addAll(wrapper.instructors);
                 }
             }
+        } catch (Exception e) { System.out.println("Could not load users.json: " + e.getMessage()); }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return users;
-    }
-
-
-    public void appendUser(String filePath, User u) {
-        JSONArray array;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            StringBuilder jsonText = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonText.append(line);
-            }
-            array = new JSONArray(jsonText.toString());
-        } catch (Exception e) {
-            array = new JSONArray();
-        }
-
-        JSONObject obj = new JSONObject(new LinkedHashMap<>());
-        obj.put("email", u.email);
-        obj.put("password", u.password);
-
-        if (u instanceof Student) {
-            obj.put("usertype", "Student");
-        } else if (u instanceof Instructor) {
-            obj.put("usertype", "Instructor");
-        }
-        array.put(obj);
-
-        try (FileWriter writer = new FileWriter(filePath)) {
-            writer.write(array.toString(4));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String sha256(String input) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(input.getBytes());
-
-            // Convert bytes to hex
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                hexString.append(String.format("%02x", b));
+            File c = new File(COURSES_FILE);
+            if (c.exists()) {
+                FileReader fr = new FileReader(COURSES_FILE);
+                Type courseListType = new TypeToken<ArrayList<Course>>(){}.getType();
+                List<Course> loaded = gson.fromJson(fr, courseListType);
+                fr.close();
+                if (loaded!=null) courses = loaded;
             }
-            return hexString.toString();
-
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (Exception e) { System.out.println("Could not load courses.json: " + e.getMessage()); }
     }
 
-
-    public boolean contains(String email){
-        for (User user : records) {
-            if (user.getEmail().equals(email)) {
-                return true;
+    public  void save() {
+        try {
+            List<Student> students = new ArrayList<Student>();
+            List<Instructor> instructors = new ArrayList<Instructor>();
+            for (User u : users) {
+                if (u instanceof Student) students.add((Student)u);
+                else if (u instanceof Instructor) instructors.add((Instructor)u);
             }
-        }
-        return false;
+            UserWrapper wrapper = new UserWrapper();
+            wrapper.students = students;
+            wrapper.instructors = instructors;
+
+            FileWriter fw = new FileWriter(USERS_FILE);
+            gson.toJson(wrapper, fw);
+            fw.close();
+
+            FileWriter fw2 = new FileWriter(COURSES_FILE);
+            gson.toJson(courses, fw2);
+            fw2.close();
+        } catch (Exception e) { System.out.println("Save failed: " + e.getMessage()); }
     }
 
-    public String getFilename() {
-        return filename;
+    public  boolean addUser(User u) {
+        for (User x : users) {
+            if (x.getEmail().equalsIgnoreCase(u.getEmail())) return false;
+        }
+        users.add(u);
+        save();
+        return true;
+    }
+
+    public  Optional<User> findByEmail(String email) {
+        for (User u : users) {
+            if (u.getEmail().equalsIgnoreCase(email)) return Optional.of(u);
+        }
+        return Optional.empty();
+    }
+
+    public  Optional<User> findById(String id) {
+        for (User u : users) {
+            if (u.getUserId().equals(id)) return Optional.of(u);
+        }
+        return Optional.empty();
+    }
+
+    public  void addCourse(Course c) {
+        courses.add(c);
+        save();
+    }
+
+    public  List<Course> getAllCourses() {
+        return courses;
+    }
+
+    public  Optional<Course> getCourseById(String id) {
+        for (Course c : courses) {
+            if (c.getCourseId().equals(id)) return Optional.of(c);
+        }
+        return Optional.empty();
+    }
+
+    public void updateCourse(Course updated) {
+        for (int i=0;i<courses.size();i++) if (courses.get(i).getCourseId().equals(updated.getCourseId())) { courses.set(i, updated); break; }
+        save();
+    }
+
+    static class UserWrapper {
+        public List<Student> students;
+        public List<Instructor> instructors;
     }
 }
-
