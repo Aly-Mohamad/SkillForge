@@ -1,0 +1,36 @@
+{
+  "students": [
+    {
+      "enrolledCourses": [
+        "C2182",
+        "C8082"
+      ],
+      "userId": "S4639",
+      "role": "student",
+      "username": "ahmed",
+      "email": "ahmed@gmail.com",
+      "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+    },
+    {
+      "enrolledCourses": [],
+      "userId": "S4412",
+      "role": "student",
+      "username": "mohab",
+      "email": "mohab@gmail.com",
+      "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+    }
+  ],
+  "instructors": [
+    {
+      "createdCourses": [
+        "C2182",
+        "C8082"
+      ],
+      "userId": "I7825",
+      "role": "instructor",
+      "username": "aly",
+      "email": "aly@gmail.com",
+      "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+    }
+  ]
+}

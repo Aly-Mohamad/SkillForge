@@ -1,0 +1,42 @@
+[
+  {
+    "courseId": "C2182",
+    "title": "control",
+    "description": "el genral",
+    "instructorId": "I7825",
+    "lessons": [
+      {
+        "lessonId": "L2095",
+        "title": "L1",
+        "content": "ROOT LOCUS",
+        "resources": []
+      },
+      {
+        "lessonId": "L0644",
+        "title": "L2",
+        "content": "ROUTH",
+        "resources": []
+      }
+    ],
+    "students": [
+      "S4639"
+    ]
+  },
+  {
+    "courseId": "C8082",
+    "title": "signals",
+    "description": "tarass",
+    "instructorId": "I7825",
+    "lessons": [
+      {
+        "lessonId": "L0326",
+        "title": "LTI",
+        "content": "LTI1",
+        "resources": []
+      }
+    ],
+    "students": [
+      "S4639"
+    ]
+  }
+]
