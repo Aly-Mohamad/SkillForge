@@ -1,84 +1,126 @@
 package ui.frames;
 
-import model.JsonDatabaseManager;
 import model.*;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class CourseEditorDialog extends JDialog {
+
     public CourseEditorDialog(JFrame owner, final JsonDatabaseManager db, final Course course) {
-        super(owner, "Edit Course - "+course.getTitle(), true);
-        setSize(700,500); setLocationRelativeTo(owner);
+        super(owner, "Edit Course - " + course.getTitle(), true);
+        setSize(700, 500);
+        setLocationRelativeTo(owner);
         setLayout(new BorderLayout());
 
-        JPanel top = new JPanel(new GridLayout(3,2));
+        JPanel top = new JPanel(new GridLayout(3, 2));
         final JTextField title = new JTextField(course.getTitle());
         final JTextArea desc = new JTextArea(course.getDescription());
-        top.add(new JLabel("Title:")); top.add(title);
-        top.add(new JLabel("Description:")); top.add(new JScrollPane(desc));
+        top.add(new JLabel("Title:"));
+        top.add(title);
+        top.add(new JLabel("Description:"));
+        top.add(new JScrollPane(desc));
 
-        final DefaultListModel<Lesson> lm = new DefaultListModel<Lesson>();
-        for (Lesson L : course.getLessons()) lm.addElement(L);
-        final JList<Lesson> lessonsList = new JList<Lesson>(lm);
-        lessonsList.setCellRenderer(new javax.swing.ListCellRenderer<Lesson>() {
-            public java.awt.Component getListCellRendererComponent(JList<? extends Lesson> l, Lesson value, int index, boolean isSelected, boolean cellHasFocus) {
-                return new JLabel(value.getTitle());
-            }
-        });
+        final JPanel lessonPanel = new JPanel();
+        lessonPanel.setLayout(new BoxLayout(lessonPanel, BoxLayout.Y_AXIS));
+
+        for (Lesson lesson : course.getLessons()) {
+            lessonPanel.add(createLessonRow(lesson, course, db, lessonPanel));
+        }
+
+        JScrollPane scrollPane = new JScrollPane(lessonPanel);
 
         JPanel buttons = new JPanel();
         JButton addLesson = new JButton("Add Lesson");
-        JButton editLesson = new JButton("Edit Lesson");
-        JButton delLesson = new JButton("Delete Lesson");
         JButton save = new JButton("Save Course");
-        buttons.add(addLesson); buttons.add(editLesson); buttons.add(delLesson); buttons.add(save);
+        buttons.add(addLesson);
+        buttons.add(save);
 
         add(top, BorderLayout.NORTH);
-        add(new JScrollPane(lessonsList), BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         add(buttons, BorderLayout.SOUTH);
 
-        addLesson.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String t = JOptionPane.showInputDialog(CourseEditorDialog.this, "Lesson title:");
-                if (t==null || t.trim().isEmpty()) return;
-                String c = JOptionPane.showInputDialog(CourseEditorDialog.this, "Lesson content:");
-                Lesson L = new Lesson(t, c==null?"":c);
-                course.addLesson(L);
-                lm.addElement(L);
+        addLesson.addActionListener(e -> {
+            Lesson newLesson = new Lesson("New Lesson", "");
+            course.addLesson(newLesson);
+            lessonPanel.add(createLessonRow(newLesson, course, db, lessonPanel));
+            lessonPanel.revalidate();
+            lessonPanel.repaint();
+            db.save();
+        });
+
+        save.addActionListener(e -> {
+            course.setTitle(title.getText());
+            course.setDescription(desc.getText());
+            db.updateCourse(course);
+            JOptionPane.showMessageDialog(CourseEditorDialog.this, "Saved");
+            dispose();
+        });
+    }
+
+    private JPanel createLessonRow(Lesson lesson, Course course, JsonDatabaseManager db, JPanel container) {
+        JPanel row = new JPanel(new BorderLayout());
+        row.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(4, 6, 4, 6),
+                BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1)
+        ));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+
+        // Left panel for title and content
+        JPanel fieldsPanel = new JPanel(new GridLayout(2, 2, 5, 2));
+        JLabel titleLabel = new JLabel("📘 Title:");
+        JTextField titleField = new JTextField(lesson.getTitle());
+        titleField.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        titleField.setPreferredSize(new Dimension(200, 25));
+
+        JLabel contentLabel = new JLabel("📝 Content:");
+        JTextField contentField = new JTextField(lesson.getContent());
+        contentField.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        contentField.setPreferredSize(new Dimension(200, 25));
+
+        fieldsPanel.add(titleLabel);
+        fieldsPanel.add(titleField);
+        fieldsPanel.add(contentLabel);
+        fieldsPanel.add(contentField);
+
+        // Right panel for buttons stacked vertically
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        JButton updateBtn = new JButton("Update");
+        JButton deleteBtn = new JButton("Delete");
+
+        Dimension btnSize = new Dimension(80, 25);
+        updateBtn.setMaximumSize(btnSize);
+        deleteBtn.setMaximumSize(btnSize);
+
+        updateBtn.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        deleteBtn.setFont(new Font("SansSerif", Font.PLAIN, 11));
+
+        updateBtn.addActionListener(e -> {
+            lesson.setTitle(titleField.getText());
+            lesson.setContent(contentField.getText());
+            db.save();
+            container.revalidate();
+            container.repaint();
+        });
+
+        deleteBtn.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(container, "Delete this lesson?", "Confirm", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                course.removeLesson(lesson.getLessonId());
+                container.remove(row);
                 db.save();
+                container.revalidate();
+                container.repaint();
             }
         });
 
-        editLesson.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Lesson sel = lessonsList.getSelectedValue(); if (sel==null) { JOptionPane.showMessageDialog(CourseEditorDialog.this, "Select lesson"); return; }
-                String t = JOptionPane.showInputDialog(CourseEditorDialog.this, "Title:", sel.getTitle());
-                String c = JOptionPane.showInputDialog(CourseEditorDialog.this, "Content:", sel.getContent());
-                if (t!=null) sel.setTitle(t);
-                if (c!=null) sel.setContent(c);
-                lessonsList.repaint();
-                db.save();
-            }
-        });
+        buttonPanel.add(updateBtn);
+        buttonPanel.add(Box.createVerticalStrut(5));
+        buttonPanel.add(deleteBtn);
 
-        delLesson.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Lesson sel = lessonsList.getSelectedValue(); if (sel==null) { JOptionPane.showMessageDialog(CourseEditorDialog.this, "Select"); return; }
-                course.removeLesson(sel.getLessonId()); lm.removeElement(sel); db.save();
-            }
-        });
-
-        save.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                course.setTitle(title.getText());
-                course.setDescription(desc.getText());
-                db.updateCourse(course);
-                JOptionPane.showMessageDialog(CourseEditorDialog.this, "Saved");
-                dispose();
-            }
-        });
+        row.add(fieldsPanel, BorderLayout.CENTER);
+        row.add(buttonPanel, BorderLayout.EAST);
+        return row;
     }
 }

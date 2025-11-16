@@ -10,7 +10,9 @@ public class Student extends User {
         super("student", username, email, passwordHash);
     }
 
-    public List<String> getEnrolledCourses() { return enrolledCourses; }
+    public List<String> getCourses() {
+        return enrolledCourses;
+    }
 
     public void enroll(String courseId) {
         if (!enrolledCourses.contains(courseId)) {
@@ -18,4 +20,15 @@ public class Student extends User {
         }
     }
 
+    public void unenroll(String courseId) {
+        enrolledCourses.remove(courseId);
+    }
+
+    public boolean isEnrolled(String courseId) {
+        return enrolledCourses.contains(courseId);
+    }
+
+    public void setEnrolledCourses(List<String> courses) {
+        this.enrolledCourses = new ArrayList<>(courses);
+    }
 }

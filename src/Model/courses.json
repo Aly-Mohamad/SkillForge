@@ -1,42 +1,62 @@
 [
   {
-    "courseId": "C2182",
-    "title": "control",
-    "description": "el genral",
-    "instructorId": "I7825",
+    "courseId": "C8078",
+    "title": "python",
+    "description": "oop concepts using python",
+    "instructorId": "I9592",
     "lessons": [
       {
-        "lessonId": "L2095",
-        "title": "L1",
-        "content": "ROOT LOCUS",
-        "resources": []
-      },
-      {
-        "lessonId": "L0644",
-        "title": "L2",
-        "content": "ROUTH",
+        "lessonId": "L8086",
+        "title": "intro to python",
+        "content": "what does python mean",
         "resources": []
       }
     ],
     "students": [
-      "S4639"
+      "S6869",
+      "S0138"
     ]
   },
   {
-    "courseId": "C8082",
-    "title": "signals",
-    "description": "tarass",
-    "instructorId": "I7825",
+    "courseId": "C3354",
+    "title": "Javascript",
+    "description": "JS From Zero to Hero",
+    "instructorId": "I6798",
     "lessons": [
       {
-        "lessonId": "L0326",
-        "title": "LTI",
-        "content": "LTI1",
+        "lessonId": "L8602",
+        "title": "Intro to JS",
+        "content": "First App",
         "resources": []
       }
     ],
     "students": [
-      "S4639"
+      "S0138"
+    ]
+  },
+  {
+    "courseId": "C2489",
+    "title": "Python Course",
+    "description": "OOP Programming",
+    "instructorId": "I6798",
+    "lessons": [],
+    "students": []
+  },
+  {
+    "courseId": "C4904",
+    "title": "Signals \u0026 Systems",
+    "description": "",
+    "instructorId": "I6798",
+    "lessons": [
+      {
+        "lessonId": "L4748",
+        "title": "New Lesson",
+        "content": "",
+        "resources": []
+      }
+    ],
+    "students": [
+      "S0138"
     ]
   }
 ]

@@ -8,74 +8,102 @@ import model.Instructor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class LoginFrame extends JFrame {
     private AuthManager auth;
     private JsonDatabaseManager db;
 
     public LoginFrame(JsonDatabaseManager db) {
-        this.db = db; this.auth = new AuthManager(db);
+        this.db = db;
+        this.auth = new AuthManager(db);
         setTitle("SkillForge - Login");
-        setSize(400,220);
+        setSize(400, 280);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         init();
     }
 
     private void init() {
-        JPanel p = new JPanel(new java.awt.GridLayout(4,2,5,5));
-        JTextField email = new JTextField();
-        JPasswordField pass = new JPasswordField();
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JTextField emailField = new JTextField();
+        JPasswordField passField = new JPasswordField();
         JButton btnLogin = new JButton("Login");
         JButton btnSignup = new JButton("Signup");
 
-        p.add(new JLabel("Email:")); p.add(email);
-        p.add(new JLabel("Password:")); p.add(pass);
-        p.add(btnLogin); p.add(btnSignup);
+        JRadioButton studentRadio = new JRadioButton("Student");
+        JRadioButton instructorRadio = new JRadioButton("Instructor");
+        ButtonGroup roleGroup = new ButtonGroup();
+        roleGroup.add(studentRadio);
+        roleGroup.add(instructorRadio);
+        studentRadio.setSelected(true);
 
-        add(p);
-        email.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pass.requestFocusInWindow();
+        gbc.gridx = 0; gbc.gridy = 0;
+        panel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        panel.add(emailField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        panel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        panel.add(passField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        panel.add(new JLabel("Login as:"), gbc);
+        gbc.gridx = 1;
+        JPanel rolePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        rolePanel.add(studentRadio);
+        rolePanel.add(instructorRadio);
+        panel.add(rolePanel, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        panel.add(btnLogin, gbc);
+        gbc.gridy = 4;
+        panel.add(btnSignup, gbc);
+
+        add(panel);
+
+        emailField.addActionListener(e -> passField.requestFocusInWindow());
+        passField.addActionListener(e -> btnLogin.doClick());
+
+        btnLogin.addActionListener(e -> {
+            String email = emailField.getText().trim();
+            String password = new String(passField.getPassword());
+            String selectedRole = studentRadio.isSelected() ? "student" : "instructor";
+
+            if (email.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Fill email and password");
+                return;
             }
-        });
-        pass.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                btnLogin.doClick();
-            }
-        });
-        btnLogin.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String em = email.getText().trim();
-                String pw = new String(pass.getPassword());
-                if (em.isEmpty() || pw.isEmpty()) { JOptionPane.showMessageDialog(LoginFrame.this, "Fill email and password"); return; }
-                java.util.Optional<User> opt = auth.login(em,pw);
-                if (opt.isPresent()) {
-                    User user = opt.get();
-                    JOptionPane.showMessageDialog(LoginFrame.this, "Welcome, "+user.getUsername());
-                    LoginFrame.this.setVisible(false);
-                    if ("student".equals(user.getRole())) {
-                        Student s = (Student) user;
-                        new StudentDashboardFrame(db,s).setVisible(true);
-                    } else {
-                        Instructor ins = (Instructor) user;
-                        new InstructorDashboardFrame(db,ins).setVisible(true);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(LoginFrame.this, "Invalid credentials");
+
+            java.util.Optional<User> opt = auth.login(email, password);
+            if (opt.isPresent()) {
+                User user = opt.get();
+                if (!selectedRole.equals(user.getRole())) {
+                    JOptionPane.showMessageDialog(this, "This account is not registered as a " + selectedRole);
+                    return;
                 }
+
+                JOptionPane.showMessageDialog(this, "Welcome, " + user.getUsername());
+                this.setVisible(false);
+
+                if ("student".equals(user.getRole())) {
+                    new StudentDashboardFrame(db, (Student) user).setVisible(true);
+                } else {
+                    new InstructorDashboardFrame(db, (Instructor) user).setVisible(true);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid credentials");
             }
         });
 
-        btnSignup.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new SignupFrame(db).setVisible(true);
-                LoginFrame.this.setVisible(false);
-            }
+        btnSignup.addActionListener(e -> {
+            new SignupFrame(db).setVisible(true);
+            this.setVisible(false);
         });
     }
 }

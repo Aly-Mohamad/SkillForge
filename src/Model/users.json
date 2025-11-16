@@ -18,6 +18,31 @@
       "username": "mohab",
       "email": "mohab@gmail.com",
       "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+    },
+    {
+      "enrolledCourses": [
+        "C8082",
+        "C8078"
+      ],
+      "userId": "S6869",
+      "role": "student",
+      "username": "ahmed",
+      "email": "ahmed1@gmail.com",
+      "password": "c70f9ab3421f9ce3fbb214fd2532619650b942c8fc744b025529c4ee349651cd"
+    },
+    {
+      "enrolledCourses": [
+        "C8078",
+        "C3354",
+        "C2182",
+        "C4904",
+        "C8082"
+      ],
+      "userId": "S0138",
+      "role": "student",
+      "username": "youssef88",
+      "email": "youssef1@gmail.com",
+      "password": "bfa3d224aa3263490dad0f945f4ea741fc002265fc4d45d0d5c2a4e6ca88dfe3"
     }
   ],
   "instructors": [
@@ -31,6 +56,28 @@
       "username": "aly",
       "email": "aly@gmail.com",
       "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+    },
+    {
+      "createdCourses": [
+        "C8078"
+      ],
+      "userId": "I9592",
+      "role": "instructor",
+      "username": "youssef",
+      "email": "youssef@gmail.com",
+      "password": "038352ad5eedb708d205c2fc0d4891fd98a232e22e4e8fc66ffb1471a992dee5"
+    },
+    {
+      "createdCourses": [
+        "C3354",
+        "C2489",
+        "C4904"
+      ],
+      "userId": "I6798",
+      "role": "instructor",
+      "username": "hoda",
+      "email": "hoda@gmail.com",
+      "password": "32955acf13dea6d995e070bb486e796addf37fb28cba9985d5e7b4bf9c0dc8bc"
     }
   ]
 }
