@@ -81,7 +81,6 @@ public class LoginFrame extends JFrame {
 
             java.util.Optional<User> opt = auth.login(email, password);
 
-            // Only login if credentials are correct AND role matches
             if (opt.isPresent() && selectedRole.equals(opt.get().getRole())) {
                 User user = opt.get();
                 JOptionPane.showMessageDialog(this, "Welcome, " + user.getUsername());
@@ -93,7 +92,6 @@ public class LoginFrame extends JFrame {
                     new InstructorDashboardFrame(db, (Instructor) user).setVisible(true);
                 }
             } else {
-                // Wrong credentials OR wrong role
                 JOptionPane.showMessageDialog(this, "Invalid credentials");
             }
         });

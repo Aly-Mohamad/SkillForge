@@ -36,7 +36,8 @@
         "C3354",
         "C2182",
         "C4904",
-        "C8082"
+        "C8082",
+        "C0681"
       ],
       "userId": "S0138",
       "role": "student",
@@ -84,7 +85,8 @@
       "createdCourses": [
         "C3354",
         "C2489",
-        "C4904"
+        "C4904",
+        "C0681"
       ],
       "userId": "I6798",
       "role": "instructor",

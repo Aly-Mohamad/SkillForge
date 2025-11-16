@@ -11,9 +11,7 @@ public class Student extends model.User {
         super("student", username, email, passwordHash);
     }
 
-    // ---------------------------
-    // Enrollment Handling
-    // ---------------------------
+
     public List<String> getCourses() {
         return enrolledCourses;
     }

@@ -52,9 +52,6 @@ public class LessonListDialog extends JDialog {
 
         add(new JScrollPane(list), BorderLayout.CENTER);
 
-        // -------------------
-        // Button panel: Back + Mark as Completed
-        // -------------------
         JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         JButton backButton = new JButton("Back");
         JButton markCompletedButton = new JButton("Mark as Completed");
@@ -62,10 +59,8 @@ public class LessonListDialog extends JDialog {
         southPanel.add(backButton);
         add(southPanel, BorderLayout.SOUTH);
 
-        // Back button closes dialog
         backButton.addActionListener(e -> LessonListDialog.this.dispose());
 
-        // Mark as Completed button
         markCompletedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
